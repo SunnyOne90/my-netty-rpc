@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="my-netty-api" />
+        <module name="my-netty-consumer" />
+        <module name="my-netty-monitor" />
+        <module name="my-netty-protocol" />
+        <module name="my-netty-provider" />
+        <module name="my-netty-registry" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
