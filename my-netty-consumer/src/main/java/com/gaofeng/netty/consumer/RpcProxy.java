@@ -1,6 +1,8 @@
 package com.gaofeng.netty.consumer;
 
 import com.gaofeng.netty.rpc.protocol.InvokerProtocol;
+import com.gaofeng.netty.rpc.registry.client.IServiceDiscovery;
+import com.gaofeng.netty.rpc.registry.client.impl.ServiceDiscoveryWithZk;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -17,19 +19,23 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class RpcProxy {
+    private static IServiceDiscovery serviceDiscovery = new ServiceDiscoveryWithZk();
+
 
     public static <T> T create(Class<?> clazz){
-        MethodProxy proxy = new MethodProxy(clazz);
+        MethodProxy proxy = new MethodProxy(clazz,serviceDiscovery);
         Class<?> [] interfaces = clazz.isInterface() ? new Class[]{clazz} : clazz.getInterfaces();
         T result =(T)Proxy.newProxyInstance(clazz.getClassLoader(),interfaces,proxy);
         return result;
     }
 
     private static class MethodProxy implements InvocationHandler{
+        private IServiceDiscovery serviceDiscovery;
         private Class<?> clazz;
 
-        public MethodProxy(Class<?> clazz) {
+        public MethodProxy(Class<?> clazz,IServiceDiscovery serviceDiscovery) {
             this.clazz = clazz;
+            this.serviceDiscovery = serviceDiscovery;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -70,7 +76,9 @@ public class RpcProxy {
                                 pipeline.addLast("handler",consumerHandler);
                             }
                         });
-                ChannelFuture future = b.connect("localhost",8080).sync();
+                String serviceAddress = serviceDiscovery.discovery(this.clazz.getName());
+                String urls[]=serviceAddress.split(":");
+                ChannelFuture future = b.connect(urls[0],Integer.parseInt(urls[1])).sync();
                 future.channel().writeAndFlush(msg).sync();
                 future.channel().closeFuture().sync();
 

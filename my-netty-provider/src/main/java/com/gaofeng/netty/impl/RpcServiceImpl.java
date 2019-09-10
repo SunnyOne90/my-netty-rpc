@@ -1,7 +1,9 @@
-package com.gaofeng.netty.provider;
+package com.gaofeng.netty.impl;
 
 import com.gaofeng.netty.rpc.api.IRpcService;
+import com.gaofeng.netty.util.Annotation.RpcService;
 
+@RpcService(IRpcService.class)
 public class RpcServiceImpl implements IRpcService {
 
 	public int add(int a, int b) {

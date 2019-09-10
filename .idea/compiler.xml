@@ -12,6 +12,7 @@
         <module name="my-netty-protocol" />
         <module name="my-netty-provider" />
         <module name="my-netty-registry" />
+        <module name="my-netty-util" />
       </profile>
     </annotationProcessing>
   </component>
